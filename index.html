@@ -63,7 +63,7 @@
       element.scrollTop = element.scrollHeight;
         var commentsRef = firebase.database().ref('messages/');
         commentsRef.limitToLast(15).on('child_added', function(data) {
-            $('#other_messages').append($('<div>' + data.val().nickname + ':' + data.val().message + '</div>'));
+            $('#other_messages').append($('<div>' + data.val().nickname + ' : ' + data.val().message + '</div>'));
             var element = document.getElementById("yourDivID");
             element.scrollTop = element.scrollHeight;
 
