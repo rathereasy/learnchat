@@ -1,0 +1,135 @@
+<html><head>
+
+  <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyAmosLTPerH-BM9DoGZsw88X_DwWb7EhN4",
+      authDomain: "learnchat-1d274.firebaseapp.com",
+      databaseURL: "https://learnchat-1d274.firebaseio.com",
+      storageBucket: "learnchat-1d274.appspot.com",
+      messagingSenderId: "397805299741"
+    };
+    firebase.initializeApp(config);
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <script>
+    function onTestChange() {
+      var key = window.event.keyCode;
+
+      // If the user has pressed enter
+      if (key === 13) {
+       var val = document.getElementById("status_message").value;
+        var foo = firebase.database().ref('messages/').push();
+        foo.set({
+          message: document.getElementById("status_message").value,
+          nickname:nickname
+
+        });
+
+
+
+        document.getElementById("status_message").value = "";
+//        document.getElementById("status_message").setSelectionRange(0,0);
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+    var nickname = "nonick";
+    $(document).ready(function() {
+
+
+        $("#myModal").modal({
+          backdrop: 'static',
+          keyboard: false
+        });
+
+      $('#username_button').click(function(){
+        if($('#username_value').val().length > 2) {
+          $('#myModal').modal('hide');
+          nickname=$('#username_value').val();
+        } else {
+          $('#modalError').text('nickname must be at least two characters');
+        }
+      });
+
+      var element = document.getElementById("yourDivID");
+      element.scrollTop = element.scrollHeight;
+        var commentsRef = firebase.database().ref('messages/');
+        commentsRef.limitToLast(15).on('child_added', function(data) {
+            $('#other_messages').append($('<div>' + data.val().nickname + ' : ' + data.val().message + '</div>'));
+            var element = document.getElementById("yourDivID");
+            element.scrollTop = element.scrollHeight;
+
+        });
+    });
+
+
+
+
+
+
+  </script>
+  <style>
+    #status_message {
+      border-bottom: 1px solid #b2b2b2 !important;
+      height: 34px !important;
+      margin: 7px;
+      padding: 5px !important;
+      border: medium none;
+      width: 95% !important;
+    }
+
+
+    #yourDivID {
+      position: fixed;
+      bottom: 0px;
+      height:20%;
+    }
+
+
+    <style>
+
+
+  </style>
+
+</head>
+<body>
+
+<div id="myModal" class="modal fade">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <h4 class="modal-title">Select a nickname</h4>
+      </div>
+      <div class="modal-body">
+        <div id="modalError"></div>
+       <input id="username_value">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="username_button">Set nickname</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<iframe src="https://docs.google.com/document/d/1xbCgRQsVS-ZhCT9tKkunK_7Ta0jGX-qfbXIdm3dsHnU/pub" width="100%" height="80%"></iframe>
+
+<div  style="overflow-y: scroll">
+
+  <div id = "yourDivID" style="padding:9px;width:100%;overflow-y: scroll">
+
+<div id="other_messages"></div>
+    <input onkeypress="onTestChange();" id="status_message" placeholder="Type a message..." rows="10" cols="40" name="message">
+  </div>
+</div>
+
+</body></html>
