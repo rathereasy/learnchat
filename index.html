@@ -27,11 +27,10 @@
 		</script>
 		<script>
 			function sendMessage() {
-				var val = document.getElementById("status_message").value;
 				var foo = firebase.database().ref('privmessages/').push();
 				foo.set({
 					name: document.getElementById("name").value,
-					email: document.getElementById("email").value
+					email: document.getElementById("email").value,
 					message: document.getElementById("message").value
 				});
 			}
@@ -44,8 +43,13 @@
 			<header id="header">
 				<div class="inner">
 					<a href="#" class="image avatar"><img src="images/avatar.jpg" alt="" /></a>
-					<h1><strong>I am Jacques</strong>, educator,<br />
-						full stack developer
+					<h1><strong>I am Jacques</strong>,<br/>
+						Educator,<br />
+						CEGEP teacher,<br />
+						Full stack developer<br />
+						NodeJS<br />
+						Web<br />
+						Android<br />
 					</h1>
 				</div>
 			</header>
@@ -75,7 +79,7 @@
 								<p>Complete and detailed guide to building a mobile application.</p>
 							</article>
 							<article class="6u$ 12u$(xsmall) work-item">
-								<a href="http://lingoracer.com" class="fit"><img src="http://lingoracer.com/static/img/logo.png" style="background-color:red; border-radius: 25px" height="256" alt="" /></a>
+								<a href="http://lingoracer.com" class="fit"><img src="http://lingoracer.com/static/img/logo.png" style="background-color:#ff3737; border-radius: 25px; padding:16px; margin:20px" height="216" alt="" /></a>
 								<h3>Lingoracer</h3>
 								<p>Learn Japanese and chinese by competing against others.</p>
 							</article>
@@ -98,7 +102,7 @@
 									</div>
 								</form>
 								<ul class="actions">
-									<li><input type="submit" value="Send Message" onclick="sendMessage" /></li>
+									<li><input type="submit" value="Send Message" onclick="sendMessage()" /></li>
 								</ul>
 							</div>
 						</div>
