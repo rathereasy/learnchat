@@ -95,6 +95,34 @@
       });
 
 
+      var conref = firebase.database().ref('connected_users');
+      var add_init = false;
+      var rem_init = false;
+      conref.limitToLast(1).on('child_added', function(data) {
+        if(!add_init) {
+          add_init = true;
+          return;
+        }
+        const new_div = $('<div/>');
+        new_div.text(data.val().nickname + ' has joined');
+        new_div.attr('style','padding-left:25;font-size:85%');
+        $('#other_messages').append(new_div);
+      });
+      conref.limitToLast(1).on('child_removed', function(data) {
+        if(!rem_init) {
+          rem_init = true;
+          return;
+        }
+        const new_div = $('<div/>');
+        new_div.text(data.val().nickname + ' has left');
+        new_div.attr('style','padding-left:25: font-size:85%');
+        $('#other_messages').append(new_div);
+
+      });
+
+
+
+
     });
 
 
@@ -134,15 +162,15 @@
     <div class="modal-content">
       <div class="modal-header">
 
-        <h4 class="modal-title">Select a nickname to chat</h4>
+        <h4 class="modal-title">Come chat with us</h4>
       </div>
       <div class="modal-body">
         <div id="modalError"></div>
-       <input id="username_value">
+       nickname&nbsp&nbsp<input id="username_value">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn" id="cancel_chat">I don't want to chat</button>
-        <button type="button" class="btn btn-primary" id="username_button">Set nickname</button>
+        <button type="button" class="btn" id="cancel_chat">I just want to read</button>
+        <button type="button" class="btn btn-primary" id="username_button">Start the chat</button>
 
       </div>
     </div><!-- /.modal-content -->
