@@ -43,6 +43,9 @@
     }
     var nickname = "nonick";
     $(document).ready(function() {
+
+
+
       $('#username_value').attr('value','Guest' + (Math.floor(Math.random() * 1000) + 1  ));
         $("#myModal").modal({
           backdrop: 'static',
@@ -53,6 +56,11 @@
         if($('#username_value').val().length > 2) {
           $('#myModal').modal('hide');
           nickname=$('#username_value').val();
+
+          var cu = firebase.database().ref("connected_users").push();
+          cu.set({nickname:nickname});
+          cu.onDisconnect().remove();
+
         } else {
           $('#modalError').text('nickname must be at least three characters');
         }
@@ -66,13 +74,27 @@
 
       var element = document.getElementById("yourDivID");
       element.scrollTop = element.scrollHeight;
-        var commentsRef = firebase.database().ref('messages/');
-        commentsRef.limitToLast(15).on('child_added', function(data) {
+      var commentsRef = firebase.database().ref('messages/');
+      commentsRef.limitToLast(15).on('child_added', function(data) {
             $('#other_messages').append($('<div>' + data.val().nickname + ' : ' + data.val().message + '</div>'));
             var element = document.getElementById("yourDivID");
             element.scrollTop = element.scrollHeight;
 
-        });
+      });
+
+      var commentsRef = firebase.database().ref('connected_users');
+      commentsRef.on('child_added', function(data) {
+        const new_div = $('<div/>');
+        new_div.text(data.val().nickname);
+        new_div.attr('id',data.getKey());
+        $('#all_nicks').append(new_div);
+      });
+      commentsRef.on('child_removed', function(data) {
+        $('#' + data.getKey()).remove();
+
+      });
+
+
     });
 
 
@@ -130,13 +152,20 @@
 
 <!--<iframe src="https://docs.google.com/document/d/1xbCgRQsVS-ZhCT9tKkunK_7Ta0jGX-qfbXIdm3dsHnU/pub" width="100%" height="80%"></iframe>-->
 <iframe src="https://docs.google.com/document/d/1xbCgRQsVS-ZhCT9tKkunK_7Ta0jGX-qfbXIdm3dsHnU/pub?embedded=true" width="100%" height="80%" id="content"></iframe>
-<div  style="overflow-y: scroll">
+<div style="width: 70%; height: 100%; float:left;">
 
-  <div id = "yourDivID" style="padding:9px;width:100%;overflow-y: scroll">
+  <div id = "yourDivID" style="padding:9px;width:70%;overflow-y: scroll">
 
-<div id="other_messages"></div>
-    <input onkeypress="onTestChange();" id="status_message" placeholder="Type a message..." rows="10" cols="40" name="message">
+  <div id="other_messages"></div>
+
+      <input onkeypress="onTestChange();" id="status_message" placeholder="Type a message..." rows="10" cols="40" name="message">
+    </div>
   </div>
+
 </div>
+
+<div style="width: 30%; height: 100%; float:right;">
+  <div id="all_nicks"></div>
+  </div>
 
 </body></html>
