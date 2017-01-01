@@ -1,0 +1,201 @@
+<html><head>
+
+    <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAmosLTPerH-BM9DoGZsw88X_DwWb7EhN4",
+            authDomain: "learnchat-1d274.firebaseapp.com",
+            databaseURL: "https://learnchat-1d274.firebaseio.com",
+            storageBucket: "learnchat-1d274.appspot.com",
+            messagingSenderId: "397805299741"
+        };
+        firebase.initializeApp(config);
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script>
+        function onTestChange() {
+            var key = window.event.keyCode;
+
+            // If the user has pressed enter
+            if (key === 13) {
+                var val = document.getElementById("status_message").value;
+                var foo = firebase.database().ref('messages/').push();
+                foo.set({
+                    message: document.getElementById("status_message").value,
+                    nickname:nickname
+
+                });
+
+
+
+                document.getElementById("status_message").value = "";
+//        document.getElementById("status_message").setSelectionRange(0,0);
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        var nickname = "nonick";
+        $(document).ready(function() {
+
+
+
+            $('#username_value').attr('value','Guest' + (Math.floor(Math.random() * 1000) + 1  ));
+            $("#myModal").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            $('#username_button').click(function(){
+                if($('#username_value').val().length > 2) {
+                    $('#myModal').modal('hide');
+                    nickname=$('#username_value').val();
+
+                    var cu = firebase.database().ref("connected_users").push();
+                    cu.set({nickname:nickname});
+                    cu.onDisconnect().remove();
+
+                } else {
+                    $('#modalError').text('nickname must be at least three characters');
+                }
+            });
+
+            $('#cancel_chat').click(function(){
+                $('#myModal').modal('hide');
+                $('#yourDivID').hide();
+                $('#content').attr('height', '100%');
+            });
+
+            var element = document.getElementById("yourDivID");
+            element.scrollTop = element.scrollHeight;
+            var commentsRef = firebase.database().ref('messages/');
+            commentsRef.limitToLast(15).on('child_added', function(data) {
+                $('#other_messages').append($('<div>' + data.val().nickname + ' : ' + data.val().message + '</div>'));
+                var element = document.getElementById("yourDivID");
+                element.scrollTop = element.scrollHeight;
+
+            });
+
+            var commentsRef = firebase.database().ref('connected_users');
+            commentsRef.on('child_added', function(data) {
+                const new_div = $('<div/>');
+                new_div.text(data.val().nickname);
+                new_div.attr('id',data.getKey());
+                $('#all_nicks').append(new_div);
+            });
+            commentsRef.on('child_removed', function(data) {
+                $('#' + data.getKey()).remove();
+
+            });
+
+
+            var conref = firebase.database().ref('connected_users');
+            var add_init = false;
+            var rem_init = false;
+            conref.limitToLast(1).on('child_added', function(data) {
+                if(!add_init) {
+                    add_init = true;
+                    return;
+                }
+                const new_div = $('<div/>');
+                new_div.text(data.val().nickname + ' has joined');
+                new_div.attr('style','padding-left:25;font-size:85%');
+                $('#other_messages').append(new_div);
+            });
+            conref.limitToLast(1).on('child_removed', function(data) {
+                if(!rem_init) {
+                    rem_init = true;
+                    return;
+                }
+                const new_div = $('<div/>');
+                new_div.text(data.val().nickname + ' has left');
+                new_div.attr('style','padding-left:25: font-size:85%');
+                $('#other_messages').append(new_div);
+
+            });
+
+
+
+
+        });
+
+
+
+
+
+
+    </script>
+    <style>
+        #status_message {
+            border-bottom: 1px solid #b2b2b2 !important;
+            height: 34px !important;
+            margin: 7px;
+            padding: 5px !important;
+            border: medium none;
+            width: 95% !important;
+        }
+
+
+        #yourDivID {
+            position: fixed;
+            bottom: 0px;
+            height:20%;
+        }
+
+
+        <style>
+
+
+    </style>
+
+</head>
+<body>
+
+
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h4 class="modal-title">Explanation</h4>
+            </div>
+            <div class="modal-body">
+                <div id="modalError"></div>
+                All these computer programs are unfinished. Your job: fill in the boxes to make them into valid computer programs. You can use the chat at the bottom to ask questions or give suggestions. <br>
+                Nickname&nbsp&nbsp<input id="username_value">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" id="cancel_chat">I Just want to play</button>
+                <button type="button" class="btn btn-primary" id="username_button">I want to play and chat</button>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!--<iframe src="https://docs.google.com/document/d/1xbCgRQsVS-ZhCT9tKkunK_7Ta0jGX-qfbXIdm3dsHnU/pub" width="100%" height="80%"></iframe>-->
+<iframe src="http://159.203.29.153:3000/0" width="100%" height="80%" id="content"></iframe>
+<div style="width: 70%; height: 100%; float:left;">
+
+    <div id = "yourDivID" style="padding:9px;width:70%;overflow-y: scroll">
+
+        <div id="other_messages"></div>
+
+        <input onkeypress="onTestChange();" id="status_message" placeholder="Type a message..." rows="10" cols="40" name="message">
+    </div>
+</div>
+
+</div>
+
+<div style="width: 30%; height: 100%; float:right;">
+    <div id="all_nicks"></div>
+</div>
+
+</body></html>
